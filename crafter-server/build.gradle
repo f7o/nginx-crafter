@@ -1,0 +1,51 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+dependencies {
+
+    compile "io.vertx:vertx-rx-java:$vertxVersion"
+    compile "io.vertx:vertx-web:$vertxVersion"
+
+}
+
+task copyClientData(type: Copy) {
+    from '../crafter-client/dist/'
+    include '**'
+    into 'build/resources/main/client'
+}
+
+jar.dependsOn(copyClientData)
+
+shadowJar {
+    classifier = 'fat'
+    version = null
+    manifest {
+        attributes 'Main-Verticle': 'de.f7o.nginx.crafter.Crafter'
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+}
+
+mainClassName = 'io.vertx.core.Launcher'
+
+def mainVerticleName = 'de.f7o.nginx.crafter.Crafter'
+
+// Vert.x watches for file changes in all subdirectories
+// of src/ but only for files with .java extension
+def watchForChange = 'src/**/*.java'
+
+// Vert.x will call this task on changes
+def doOnChange = '../gradlew classes'
+
+def confFile = 'conf/config.json'
+
+
+run {
+    args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange", "-conf", confFile]
+}
+
+
