@@ -5,6 +5,7 @@
 .vertx/
 bin/
 build
+dist
 node_modules/
 .classpath
 *.iml
