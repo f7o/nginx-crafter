@@ -22,15 +22,31 @@ import {
   MdPaginatorModule, MdProgressBarModule, MdListModule
 } from "@angular/material";
 import {CdkTableModule} from "@angular/cdk";
+import {RouterModule, Routes} from "@angular/router";
+import { FrontendComponent } from './components/frontend/frontend.component';
+import { BackendComponent } from './components/backend/backend.component';
+
+/**
+ * Definitions for all accessible routes and their guards.
+ */
+const appRoutes: Routes = [
+  { path: '', component: DashboardComponent },
+  { path: 'frontend', component: FrontendComponent },
+  { path: 'backend', component: BackendComponent },
+  { path: '**', component: DashboardComponent }
+];
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    FrontendComponent,
+    BackendComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    RouterModule.forRoot(appRoutes),
 
     MdAutocompleteModule,
     MdButtonModule,

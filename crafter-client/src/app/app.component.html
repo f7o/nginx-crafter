@@ -1,1 +1,28 @@
-<app-dashboard></app-dashboard>
+<td-layout>
+  <td-navigation-drawer flex sidenavTitle="NGINX Crafter" logo="" name="{{name}}" email="{{email}}">
+    <md-nav-list>
+      <a *ngFor="let item of routes" routerLink="{{item.route}}" md-list-item><md-icon>{{item.icon}}</md-icon>{{item.title}}</a>
+    </md-nav-list>
+    <div td-navigation-drawer-menu>
+      <md-nav-list>
+        <a *ngFor="let item of usermenu" md-list-item><md-icon>{{item.icon}}</md-icon>{{item.title}}</a>
+      </md-nav-list>
+    </div>
+  </td-navigation-drawer>
+  <td-layout-nav color="accent">
+    <div td-toolbar-content layout="row" layout-align="start center" flex>
+      <button md-icon-button td-menu-button tdLayoutToggle>
+        <md-icon>menu</md-icon>
+      </button>
+      <md-icon routerLink="/" class="md-icon-logo cursor-pointer">build</md-icon>
+      <span routerLink="/" class="cursor-pointer">NGINX Crafter</span>
+      <span flex></span>
+    </div>
+    <router-outlet></router-outlet>
+    <td-layout-footer>
+      <div layout="row" layout-align="start center">
+        <span class="md-caption">Made by<a md-button href="https://github.com/f7o/" target="_blank">F7O</a></span>
+      </div>
+    </td-layout-footer>
+  </td-layout-nav>
+</td-layout>
