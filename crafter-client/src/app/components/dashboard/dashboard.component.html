@@ -1,0 +1,59 @@
+<td-layout>
+  <td-navigation-drawer flex sidenavTitle="NGINX Crafter" logo="" name="{{name}}" email="{{email}}">
+    <md-nav-list>
+      <a *ngFor="let item of routes" md-list-item><md-icon>{{item.icon}}</md-icon>{{item.title}}</a>
+    </md-nav-list>
+    <div td-navigation-drawer-menu>
+      <md-nav-list>
+        <a *ngFor="let item of usermenu" md-list-item><md-icon>{{item.icon}}</md-icon>{{item.title}}</a>
+      </md-nav-list>
+    </div>
+  </td-navigation-drawer>
+  <td-layout-nav color="accent">
+    <div td-toolbar-content layout="row" layout-align="start center" flex>
+      <button md-icon-button td-menu-button tdLayoutToggle>
+        <md-icon>menu</md-icon>
+      </button>
+      <md-icon routerLink="/" class="md-icon-logo cursor-pointer">build</md-icon>
+      <span routerLink="/" class="cursor-pointer">NGINX Crafter</span>
+      <span flex></span>
+    </div>
+    <div layout-gt-sm="row" tdMediaToggle="gt-xs" mediaClasses="push-sm">
+      <div flex-gt-sm="60">
+        <md-card>
+          <md-card-header>
+            <div md-card-avatar><md-icon>library_books</md-icon></div>
+            <md-card-title>Active Frontends</md-card-title>
+            <md-card-subtitle>Internal Network</md-card-subtitle>
+          </md-card-header>
+          <md-divider></md-divider>
+          <md-card-content>
+            List of frontends
+          </md-card-content>
+          <md-card-actions>
+            <button md-button>Edit Frontends</button>
+          </md-card-actions>
+        </md-card>
+        <md-card>
+          <md-card-header>
+            <div md-card-avatar><md-icon>device_hub</md-icon></div>
+            <md-card-title>Active Backends</md-card-title>
+            <md-card-subtitle>External Access Domains</md-card-subtitle>
+          </md-card-header>
+          <md-divider></md-divider>
+          <md-card-content>
+            List of backends
+          </md-card-content>
+          <md-card-actions>
+            <button md-button>Edit Backends</button>
+          </md-card-actions>
+        </md-card>
+      </div>
+    </div>
+    <td-layout-footer>
+      <div layout="row" layout-align="start center">
+        <span class="md-caption">Made by<a md-button href="https://github.com/f7o/" target="_blank">F7O</a></span>
+      </div>
+    </td-layout-footer>
+  </td-layout-nav>
+</td-layout>
