@@ -16,8 +16,8 @@ export class RequestApi {
     return this.http.get(`/api/sites/${site}`);
   }
 
-  public putSite(f: Frontend) {
-    return this.http.put(`/api/sites/${f.id}`, JSON.stringify(f));
+  public putSite(id: String, f: String) {
+    return this.http.put(`/api/sites/${id}`, f);
   }
 
   public deleteSite(site: String) {
@@ -26,5 +26,9 @@ export class RequestApi {
 
   public toggleSite(site: String) {
     return this.http.get(`/api/sites/toggle/${site}`)
+  }
+
+  public getNonSslTpl() {
+    return this.http.get(`/api/sites/template/nonssl-reverse`)
   }
 }

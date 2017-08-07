@@ -10,7 +10,7 @@ export class Parser {
 
   public inject(f: Frontend, conf: String) {
     let res = conf;
-    res = res.replace("%default_domain%", "example.com");
+    res = res.replace("%default_domain%", "example.local");
     res = res.replace("%reverse_domain% ", f.domain.toString());
     res = res.replace("%reverse_ip%", "");
     res = res.replace("%proxy_pass_ip%", f.proxy_pass_addr.toString());
@@ -18,6 +18,5 @@ export class Parser {
     res = res.replace("%location%", f.location.toString());
     return res;
   }
-
 
 }

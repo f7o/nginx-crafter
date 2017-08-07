@@ -3,6 +3,7 @@ import {Frontend} from "../../model/frontend";
 import {RequestApi} from "../../service/request-api";
 import {Router} from "@angular/router";
 import {MdSnackBar} from "@angular/material";
+import {Parser} from "../../service/parser";
 
 @Component({
   selector: 'app-frontend-form',
@@ -16,20 +17,25 @@ export class FrontendFormComponent implements OnInit {
   constructor(
     private r: RequestApi,
     private router: Router,
-    public snackBar: MdSnackBar) { }
+    public snackBar: MdSnackBar,
+    private p: Parser) { }
 
   ngOnInit() {
   }
 
   save() {
     console.log(this.site);
-    this.r.putSite(this.site).subscribe(res => {
-      this.router.navigate(["/frontend"]);
-      this.snackBar.open(`Site "${res.json().site}" created!`,'', {
-        duration: 2000
-      }
-    )
+    this.r.getNonSslTpl().subscribe(tpl => {
+      let site = this.p.inject(this.site, tpl.text());
+      this.r.putSite(this.site.id, site).subscribe(res => {
+        this.router.navigate(["/frontend"]);
+        this.snackBar.open(`Site "${res.json().site}" created!`,'', {
+            duration: 2000
+          }
+        )
+      });
     });
+
   }
 
 }

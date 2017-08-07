@@ -1,0 +1,27 @@
+server {
+
+        listen 80 default_server;
+        listen [::]:80 default_server;
+    
+        server_name %default_domain%;
+	    return 404;
+}
+server {
+
+        listen 80;
+        listen [::]:80;
+    
+        server_name %reverse_domain% %reverse_ip%;
+
+	    # Everything is a 404
+        location / {
+          return 404; #return the code 404
+        }
+
+        location %location% {
+            proxy_pass http://%proxy_pass_ip%:%proxy_pass_port%;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+}

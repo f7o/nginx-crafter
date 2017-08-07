@@ -51,6 +51,7 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/sites/list").handler(this::getSiteFileList);
         router.get(router_prefix + "/sites/enabled/:site").handler(this::getSiteEnabled);
         router.get(router_prefix + "/sites/toggle/:site").handler(this::toggleSite);
+        router.get(router_prefix + "/sites/template/:tpl").handler(this::getSiteTpl);
 
         router.route(router_prefix + "/sites/:site*").handler(BodyHandler.create());
         router.put(router_prefix + "/sites/:site*").handler(this::putSiteConfig);
@@ -58,6 +59,8 @@ public class Crafter extends AbstractVerticle {
         router.delete(router_prefix + "/sites/:site").handler(this::deleteSiteConfig);
 
         router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
+
+        router.get(router_prefix + "/locations/template/:tpl").handler(this::getLocationTpl);
 
         createStaticRoutes(router);
         return router;
@@ -119,7 +122,11 @@ public class Crafter extends AbstractVerticle {
         configContext(ctx);
         String site = ctx.request().getParam("site");
         JsonObject o = new JsonObject().put("site", site);
-        fs.delete(getFilePath(site), res -> ctx.response().end(o.put("action", "delete").encodePrettily()));
+        isSiteEnabled(site).subscribe(v ->
+                        fs.unlink(getLinkPath(site), unlink -> {
+                            fs.delete(getFilePath(site),
+                                    res -> ctx.response().end(o.put("action", "delete").encodePrettily()));
+                        }));
     }
 
     private void getNginxConfig(RoutingContext ctx) {
@@ -155,6 +162,22 @@ public class Crafter extends AbstractVerticle {
         vertx.executeBlocking(this::reloadNginx, res -> {
             if (res.failed()) log.error(res.cause());
         });
+    }
+
+    private void getSiteTpl(RoutingContext ctx) {
+        configContext(ctx);
+        String tpl = ctx.request().getParam("tpl");
+        String path = "/Users/flo/git/nginx-crafter/templates/sites/"+tpl+".crafter";
+        fs.readFile(path, v ->
+                ctx.response().end(v.result()));
+    }
+
+    private void getLocationTpl(RoutingContext ctx) {
+        configContext(ctx);
+        String tpl = ctx.request().getParam("tpl");
+        String path = "/Users/flo/git/nginx-crafter/location/sites/"+tpl+".crafter";
+        fs.readFile(path, v ->
+                ctx.response().end(v.result()));
     }
 
     private void configContext(RoutingContext ctx) {

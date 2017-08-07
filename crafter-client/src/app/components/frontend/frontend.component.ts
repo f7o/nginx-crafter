@@ -38,7 +38,9 @@ export class FrontendComponent implements OnInit {
   toggle(site: String) {
     this.backend.toggleSite(site).subscribe(res => {
       this.snackBar.dismiss();
-      this.snackBar.open(`Status of site "${res.json().site}": ${res.json().enabled}`);
+      this.snackBar.open(`Status of site "${res.json().site}": ${res.json().enabled}`,'', {
+        duration: 2000
+      });
     });
   }
 
