@@ -10,6 +10,6 @@ npm_run_build {
 
 node {
   version = '6.9.2'
-  yarnVersion = '0.17.10'
+  yarnVersion = '0.27.5'
   download = true
 }
