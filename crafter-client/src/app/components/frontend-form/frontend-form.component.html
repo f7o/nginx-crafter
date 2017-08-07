@@ -1,0 +1,33 @@
+<md-card>
+  <md-card-title>Create new Frontend Site</md-card-title>
+  <md-card-subtitle>A (sub)domain used external reverse to internal proxy_pass</md-card-subtitle>
+  <md-card-content>
+    <md-input-container>
+      <input mdInput placeholder="name" [(ngModel)]="site.id">
+    </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="domain" [(ngModel)]="site.domain">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="http_port" [(ngModel)]="site.http_port">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="https_port" [(ngModel)]="site.https_port">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="proxy_pass_addr" [(ngModel)]="site.proxy_pass_addr">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="proxy_pass_port" [(ngModel)]="site.proxy_pass_port">
+  </md-input-container>
+  <md-input-container>
+    <input mdInput placeholder="location" [(ngModel)]="site.location">
+  </md-input-container>
+  </md-card-content>
+  <md-card-actions>
+    <button md-icon-button (click)="save()"><md-icon>save</md-icon></button>
+    <button md-icon-button routerLink="/frontend"><md-icon>cancel</md-icon></button>
+
+  </md-card-actions>
+</md-card>
+

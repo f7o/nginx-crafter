@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule }   from '@angular/forms';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -11,6 +12,9 @@ import { CovalentHttpModule } from '@covalent/http';
 import { CovalentHighlightModule } from '@covalent/highlight';
 import { CovalentMarkdownModule } from '@covalent/markdown';
 import { CovalentDynamicFormsModule } from '@covalent/dynamic-forms';
+
+import { CodemirrorModule,  } from 'ng2-codemirror';
+
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 import {
@@ -25,6 +29,11 @@ import {CdkTableModule} from "@angular/cdk";
 import {RouterModule, Routes} from "@angular/router";
 import { FrontendComponent } from './components/frontend/frontend.component';
 import { BackendComponent } from './components/backend/backend.component';
+import { FrontendFormComponent } from './components/frontend-form/frontend-form.component';
+import {RequestApi} from "./service/request-api";
+import {MyStore} from "./store/store";
+import {Parser} from "./service/parser";
+import { EditorComponent } from './components/dialogs/editor/editor.component';
 
 /**
  * Definitions for all accessible routes and their guards.
@@ -32,6 +41,7 @@ import { BackendComponent } from './components/backend/backend.component';
 const appRoutes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'frontend', component: FrontendComponent },
+  { path: 'frontend-new', component: FrontendFormComponent },
   { path: 'backend', component: BackendComponent },
   { path: '**', component: DashboardComponent }
 ];
@@ -41,10 +51,13 @@ const appRoutes: Routes = [
     AppComponent,
     DashboardComponent,
     FrontendComponent,
-    BackendComponent
+    BackendComponent,
+    FrontendFormComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes),
 
@@ -87,9 +100,12 @@ const appRoutes: Routes = [
     CovalentHttpModule.forRoot(),
     CovalentHighlightModule,
     CovalentMarkdownModule,
-    CovalentDynamicFormsModule
+    CovalentDynamicFormsModule,
+
+    CodemirrorModule
   ],
-  providers: [],
+  providers: [RequestApi, MyStore, Parser],
+  entryComponents: [EditorComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
