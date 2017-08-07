@@ -21,11 +21,9 @@
       "styles": [
         "../node_modules/@covalent/core/common/platform.scss",
         "../node_modules/codemirror/lib/codemirror.css",
-        "../node_modules/codemirror/theme/night.css",
         "styles.scss"
       ],
       "scripts": [
-        "../node_modules/codemirror/mode/nginx/nginx.js",
         "../node_modules/hammerjs/hammer.min.js"
       ],
       "environmentSource": "environments/environment.ts",
