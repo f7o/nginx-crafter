@@ -1,4 +1,12 @@
 {
   "http.host": "localhost",
-  "http.port": 8080
+  "http.port": 8080,
+  "nginx" : {
+    "config_dir": "/etc/nginx/",
+    "cert_dir": "/etc/nginx/ssl/"
+  },
+  "crafter_server": {
+    "print_config": false,
+    "route_prefix": "/api"
+  }
 }
