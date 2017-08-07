@@ -26,10 +26,8 @@ export class FrontendComponent implements OnInit {
 
   info(site: String) {
     this.backend.getSite(site).subscribe(res => {
-      console.log(res.text());
       this.diagConfig.data = res.text();
       this.mdDialog.open(EditorComponent, this.diagConfig);
-      console.log(this.parser.parse(res.text()));
     })
   }
 
