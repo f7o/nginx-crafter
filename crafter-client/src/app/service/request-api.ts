@@ -19,4 +19,12 @@ export class RequestApi {
   public putSite(f: Frontend) {
     return this.http.put(`/api/sites/${f.id}`, JSON.stringify(f));
   }
+
+  public deleteSite(site: String) {
+    return this.http.delete(`/api/sites/${site}`);
+  }
+
+  public toggleSite(site: String) {
+    return this.http.get(`/api/sites/toggle/${site}`)
+  }
 }

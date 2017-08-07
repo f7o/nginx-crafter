@@ -15,6 +15,7 @@ import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import rx.Observable;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class Crafter extends AbstractVerticle {
 
@@ -54,6 +55,8 @@ public class Crafter extends AbstractVerticle {
         router.route(router_prefix + "/sites/:site*").handler(BodyHandler.create());
         router.put(router_prefix + "/sites/:site*").handler(this::putSiteConfig);
 
+        router.delete(router_prefix + "/sites/:site").handler(this::deleteSiteConfig);
+
         router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
 
         createStaticRoutes(router);
@@ -83,8 +86,16 @@ public class Crafter extends AbstractVerticle {
 
     private void getSiteFileList(RoutingContext ctx) {
         configContext(ctx);
-        fs.readDir(config_dir + "/" + FolderConstants.SITES_AVAILABLE, handler ->
-                ctx.response().end(new JsonArray(handler.result()).encodePrettily())
+        fs.readDir(config_dir + "/" + FolderConstants.SITES_AVAILABLE, handler -> {
+                    ctx.response().end(new JsonArray(
+                            handler
+                            .result()
+                            .stream()
+                            .map(f -> f.substring(f.lastIndexOf('/') + 1))
+                            .collect(Collectors.toList()))
+                            .toString()
+                    );
+                }
         );
     }
 
@@ -100,8 +111,15 @@ public class Crafter extends AbstractVerticle {
         log.info(ctx.getBodyAsString());
         JsonObject o = new JsonObject().put("site", site);
         fs.writeFile(getFilePath(site), ctx.getBody(), res ->
-           ctx.response().end(o.put("files", "saved").encodePrettily())
+                ctx.response().end(o.put("files", "saved").encodePrettily())
         );
+    }
+
+    private void deleteSiteConfig(RoutingContext ctx) {
+        configContext(ctx);
+        String site = ctx.request().getParam("site");
+        JsonObject o = new JsonObject().put("site", site);
+        fs.delete(getFilePath(site), res -> ctx.response().end(o.put("action", "delete").encodePrettily()));
     }
 
     private void getNginxConfig(RoutingContext ctx) {
@@ -135,7 +153,7 @@ public class Crafter extends AbstractVerticle {
 
         );
         vertx.executeBlocking(this::reloadNginx, res -> {
-            if(res.failed()) log.error(res.cause());
+            if (res.failed()) log.error(res.cause());
         });
     }
 

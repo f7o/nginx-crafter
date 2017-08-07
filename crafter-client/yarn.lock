@@ -934,6 +934,10 @@ codelyzer@~3.0.1:
     source-map "^0.5.6"
     sprintf-js "^1.0.3"
 
+codemirror@^5.22.2:
+  version "5.28.0"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.28.0.tgz#2978d9280d671351a4f5737d06bbd681a0fd6f83"
+
 color-convert@^1.3.0, color-convert@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.0.tgz#1accf97dd739b983bf994d56fec8f95853641b7a"
@@ -3114,6 +3118,18 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+ng2-codemirror@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/ng2-codemirror/-/ng2-codemirror-1.1.3.tgz#e31262db1e8c03b44ac6f52e2e47aa1a2105af0c"
+  dependencies:
+    codemirror "^5.22.2"
+
+nginx-config-parser@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/nginx-config-parser/-/nginx-config-parser-0.1.1.tgz#5ea960e58d1db0f65499465fbce1e0f63aae96ce"
+  dependencies:
+    underscore "~1.5.2"
+
 no-case@^2.2.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.1.tgz#7aeba1c73a52184265554b7dc03baf720df80081"
@@ -4940,6 +4956,10 @@ uid-number@^0.0.6:
 ultron@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.0.2.tgz#ace116ab557cd197386a4e88f4685378c8b2e4fa"
+
+underscore@~1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.5.2.tgz#1335c5e4f5e6d33bbb4b006ba8c86a00f556de08"
 
 uniq@^1.0.1:
   version "1.0.1"

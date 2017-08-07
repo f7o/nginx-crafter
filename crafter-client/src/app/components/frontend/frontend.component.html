@@ -9,12 +9,17 @@
     <md-card-content>
       Table of Frontends
       <button md-button md-icon-button routerLink="/frontend-new"><md-icon>add</md-icon></button>
-      <ul>
-        <li *ngFor="let site of sites">{{site}}</li>
-      </ul>
+      <md-list>
+        <md-list-item *ngFor="let site of sites">
+          <p md-line>{{site}}</p>
+          <button md-icon-button (click)="info(site)"><md-icon>info</md-icon></button>
+          <button md-icon-button (click)="deleteSite(site)"><md-icon>cancel</md-icon></button>
+          <button md-icon-button (click)="toggle(site)"><md-icon>radio_button_checked</md-icon></button>
+        </md-list-item>
+      </md-list>
     </md-card-content>
     <md-card-actions>
-      <button md-button routerLink="/refresh" md-icon-button><md-icon>refresh</md-icon></button>
+      <button md-button (click)="refresh()" md-icon-button><md-icon>refresh</md-icon></button>
     </md-card-actions>
   </md-card>
 </div>

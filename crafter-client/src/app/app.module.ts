@@ -12,6 +12,9 @@ import { CovalentHttpModule } from '@covalent/http';
 import { CovalentHighlightModule } from '@covalent/highlight';
 import { CovalentMarkdownModule } from '@covalent/markdown';
 import { CovalentDynamicFormsModule } from '@covalent/dynamic-forms';
+
+import { CodemirrorModule,  } from 'ng2-codemirror';
+
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 import {
@@ -29,6 +32,8 @@ import { BackendComponent } from './components/backend/backend.component';
 import { FrontendFormComponent } from './components/frontend-form/frontend-form.component';
 import {RequestApi} from "./service/request-api";
 import {MyStore} from "./store/store";
+import {Parser} from "./service/parser";
+import { EditorComponent } from './components/dialogs/editor/editor.component';
 
 /**
  * Definitions for all accessible routes and their guards.
@@ -47,7 +52,8 @@ const appRoutes: Routes = [
     DashboardComponent,
     FrontendComponent,
     BackendComponent,
-    FrontendFormComponent
+    FrontendFormComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule,
@@ -94,9 +100,12 @@ const appRoutes: Routes = [
     CovalentHttpModule.forRoot(),
     CovalentHighlightModule,
     CovalentMarkdownModule,
-    CovalentDynamicFormsModule
+    CovalentDynamicFormsModule,
+
+    CodemirrorModule
   ],
-  providers: [RequestApi, MyStore],
+  providers: [RequestApi, MyStore, Parser],
+  entryComponents: [EditorComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

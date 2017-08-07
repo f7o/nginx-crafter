@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Frontend} from "../../model/frontend";
 import {RequestApi} from "../../service/request-api";
+import {Router} from "@angular/router";
+import {MdSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-frontend-form',
@@ -11,7 +13,10 @@ export class FrontendFormComponent implements OnInit {
 
   site: Frontend = new Frontend();
 
-  constructor(private r: RequestApi) { }
+  constructor(
+    private r: RequestApi,
+    private router: Router,
+    public snackBar: MdSnackBar) { }
 
   ngOnInit() {
   }
@@ -19,7 +24,11 @@ export class FrontendFormComponent implements OnInit {
   save() {
     console.log(this.site);
     this.r.putSite(this.site).subscribe(res => {
-      console.log(res.json());
+      this.router.navigate(["/frontend"]);
+      this.snackBar.open(`Site "${res.json().site}" created!`,'', {
+        duration: 2000
+      }
+    )
     });
   }
 
