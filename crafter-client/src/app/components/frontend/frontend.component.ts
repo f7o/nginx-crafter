@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {RequestApi} from "../../service/request-api";
 
 @Component({
   selector: 'app-frontend',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FrontendComponent implements OnInit {
 
-  constructor() { }
+  public sites: Object[] = [];
+
+  constructor(private backend: RequestApi) { }
 
   ngOnInit() {
+    this.backend.fetchSiteList().subscribe(res => {
+      console.log(res.toString());
+      this.sites = res.json();
+    })
   }
 
 }

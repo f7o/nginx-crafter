@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule }   from '@angular/forms';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -25,6 +26,9 @@ import {CdkTableModule} from "@angular/cdk";
 import {RouterModule, Routes} from "@angular/router";
 import { FrontendComponent } from './components/frontend/frontend.component';
 import { BackendComponent } from './components/backend/backend.component';
+import { FrontendFormComponent } from './components/frontend-form/frontend-form.component';
+import {RequestApi} from "./service/request-api";
+import {MyStore} from "./store/store";
 
 /**
  * Definitions for all accessible routes and their guards.
@@ -32,6 +36,7 @@ import { BackendComponent } from './components/backend/backend.component';
 const appRoutes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'frontend', component: FrontendComponent },
+  { path: 'frontend-new', component: FrontendFormComponent },
   { path: 'backend', component: BackendComponent },
   { path: '**', component: DashboardComponent }
 ];
@@ -41,10 +46,12 @@ const appRoutes: Routes = [
     AppComponent,
     DashboardComponent,
     FrontendComponent,
-    BackendComponent
+    BackendComponent,
+    FrontendFormComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes),
 
@@ -89,7 +96,7 @@ const appRoutes: Routes = [
     CovalentMarkdownModule,
     CovalentDynamicFormsModule
   ],
-  providers: [],
+  providers: [RequestApi, MyStore],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

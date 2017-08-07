@@ -2,8 +2,8 @@
   "http.host": "localhost",
   "http.port": 8080,
   "nginx" : {
-    "config_dir": "/etc/nginx/",
-    "cert_dir": "/etc/nginx/ssl/"
+    "config_dir": "/Users/flo/dev/nginx_conf/",
+    "cert_dir": "/Users/flo/dev/nginx_conf/ssl/"
   },
   "crafter_server": {
     "print_config": false,

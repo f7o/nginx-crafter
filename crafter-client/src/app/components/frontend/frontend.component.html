@@ -8,6 +8,10 @@
     <md-divider></md-divider>
     <md-card-content>
       Table of Frontends
+      <button md-button md-icon-button routerLink="/frontend-new"><md-icon>add</md-icon></button>
+      <ul>
+        <li *ngFor="let site of sites">{{site}}</li>
+      </ul>
     </md-card-content>
     <md-card-actions>
       <button md-button routerLink="/refresh" md-icon-button><md-icon>refresh</md-icon></button>
