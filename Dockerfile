@@ -5,7 +5,7 @@ COPY . /usr/local/nginx-crafter
 RUN chmod +x /usr/local/nginx-crafter/scripts/*.sh
 RUN /usr/local/nginx-crafter/scripts/build.sh
 
-COPY ./nginx-server/conf/config.json /conf/config.json
+COPY ./crafter-server/conf/config.json /conf/config.json
 
 WORKDIR /
 
