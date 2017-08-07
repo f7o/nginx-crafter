@@ -32,8 +32,10 @@ export class FrontendComponent implements OnInit {
   }
 
   deleteSite(site: String) {
-    this.backend.deleteSite(site).subscribe(res => console.log(res.json()));
-    this.refresh();
+    this.backend.deleteSite(site).subscribe(res => {
+      console.log(res.json());
+      this.refresh();
+    });
   }
   toggle(site: String) {
     this.backend.toggleSite(site).subscribe(res => {

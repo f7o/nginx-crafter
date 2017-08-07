@@ -15,6 +15,7 @@ import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import rx.Observable;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Crafter extends AbstractVerticle {
@@ -48,7 +49,7 @@ public class Crafter extends AbstractVerticle {
         String router_prefix = config().getJsonObject("crafter_server").getString("router_prefix", "/api");
         router.get(router_prefix + "/health").handler(this::healthMessage);
         router.get(router_prefix + "/nginx/config").handler(this::getNginxConfig);
-        router.get(router_prefix + "/sites/list").handler(this::getSiteFileList);
+        router.get(router_prefix + "/sites/list/").handler(this::getSiteFileList);
         router.get(router_prefix + "/sites/enabled/:site").handler(this::getSiteEnabled);
         router.get(router_prefix + "/sites/toggle/:site").handler(this::toggleSite);
         router.get(router_prefix + "/sites/template/:tpl").handler(this::getSiteTpl);
@@ -125,8 +126,11 @@ public class Crafter extends AbstractVerticle {
         isSiteEnabled(site).subscribe(v ->
                         fs.unlink(getLinkPath(site), unlink -> {
                             fs.delete(getFilePath(site),
-                                    res -> ctx.response().end(o.put("action", "delete").encodePrettily()));
-                        }));
+                                    res -> ctx.response().end(o.put("action", "delete_unlink").encodePrettily()));
+                        }), err -> {
+            fs.delete(getFilePath(site),
+                    res -> ctx.response().end(o.put("action", "delete_pure").encodePrettily()));
+        });
     }
 
     private void getNginxConfig(RoutingContext ctx) {

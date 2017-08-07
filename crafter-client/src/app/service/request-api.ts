@@ -31,4 +31,8 @@ export class RequestApi {
   public getNonSslTpl() {
     return this.http.get(`/api/sites/template/nonssl-reverse`)
   }
+
+  public isActive(f: Frontend) {
+    return this.http.get(`/api/sites/enabled/${f.id}`)
+  }
 }

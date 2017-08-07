@@ -3,12 +3,17 @@
     <md-card>
       <md-card-header>
         <div md-card-avatar><md-icon>library_books</md-icon></div>
-        <md-card-title>Active Frontends</md-card-title>
+        <md-card-title>Frontends</md-card-title>
         <md-card-subtitle>Internal Network</md-card-subtitle>
       </md-card-header>
       <md-divider></md-divider>
       <md-card-content>
-        List of frontends
+        <md-list>
+          <md-list-item *ngFor="let site of sites">
+            <p md-line>{{site.id}}</p>
+            <p md-line>Enabled?: {{site.active}}</p>
+          </md-list-item>
+        </md-list>
       </md-card-content>
       <md-card-actions>
         <button md-button routerLink="/frontend">Edit Frontends</button>
