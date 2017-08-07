@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.rxjava.ext.web.handler.BodyHandler;
 import io.vertx.rxjava.core.file.FileSystem;
 import io.vertx.rxjava.core.http.HttpServer;
 import io.vertx.rxjava.core.AbstractVerticle;
@@ -12,6 +13,8 @@ import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import rx.Observable;
+
+import java.io.IOException;
 
 public class Crafter extends AbstractVerticle {
 
@@ -47,7 +50,12 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/sites/list").handler(this::getSiteFileList);
         router.get(router_prefix + "/sites/enabled/:site").handler(this::getSiteEnabled);
         router.get(router_prefix + "/sites/toggle/:site").handler(this::toggleSite);
+
+        router.route(router_prefix + "/sites/:site*").handler(BodyHandler.create());
+        router.put(router_prefix + "/sites/:site*").handler(this::putSiteConfig);
+
         router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
+
         createStaticRoutes(router);
         return router;
     }
@@ -88,7 +96,12 @@ public class Crafter extends AbstractVerticle {
 
     private void putSiteConfig(RoutingContext ctx) {
         configContext(ctx);
-
+        String site = ctx.request().getParam("site");
+        log.info(ctx.getBodyAsString());
+        JsonObject o = new JsonObject().put("site", site);
+        fs.writeFile(getFilePath(site), ctx.getBody(), res ->
+           ctx.response().end(o.put("files", "saved").encodePrettily())
+        );
     }
 
     private void getNginxConfig(RoutingContext ctx) {
@@ -121,6 +134,9 @@ public class Crafter extends AbstractVerticle {
                         fs.symlink(path_link, path_exists, res -> ctx.response().end(o.put("enabled", true).encodePrettily()))
 
         );
+        vertx.executeBlocking(this::reloadNginx, res -> {
+            if(res.failed()) log.error(res.cause());
+        });
     }
 
     private void configContext(RoutingContext ctx) {
@@ -138,5 +154,18 @@ public class Crafter extends AbstractVerticle {
 
     private String getFilePath(String site) {
         return config_dir + "/" + FolderConstants.SITES_AVAILABLE + "/" + site;
+    }
+
+    private void reloadNginx(io.vertx.rxjava.core.Future<Object> future) {
+        try {
+            Process p = Runtime
+                    .getRuntime()
+                    .exec("service nginx reload");
+            p.waitFor();
+            future.complete();
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage());
+            future.failed();
+        }
     }
 }
