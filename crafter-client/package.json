@@ -1,7 +1,9 @@
 {
   "name": "nginx-crafter",
-  "version": "0.0.0",
-  "license": "MIT",
+  "version": "0.0.0-alpha1",
+  "description": "NGINX Reverse Proxy WebUI",
+  "license": "private",
+  "author": "Florian Zouhar <mail@f7o.de>",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --deploy-url /nginx-crafter --proxy-config conf/proxy.conf.json",
@@ -55,5 +57,12 @@
     "ts-node": "~3.0.4",
     "tslint": "~5.3.2",
     "typescript": "~2.3.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/f7o/nginx-crafter"
+  },
+  "bugs": {
+    "url": "https://github.com/f7o/nginx-crafter/issues"
   }
 }
