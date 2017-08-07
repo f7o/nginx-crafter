@@ -45,9 +45,9 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/health").handler(this::healthMessage);
         router.get(router_prefix + "/nginx/config").handler(this::getNginxConfig);
         router.get(router_prefix + "/sites/list").handler(this::getSiteFileList);
-        router.get(router_prefix + "/sites/enabled/:file").handler(this::getSiteEnabled);
-        router.get(router_prefix + "/sites/toggle/:file").handler(this::toggleSite);
-        router.get(router_prefix + "/sites/:file").handler(this::getSiteConfig);
+        router.get(router_prefix + "/sites/enabled/:site").handler(this::getSiteEnabled);
+        router.get(router_prefix + "/sites/toggle/:site").handler(this::toggleSite);
+        router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
         createStaticRoutes(router);
         return router;
     }
@@ -82,9 +82,13 @@ public class Crafter extends AbstractVerticle {
 
     private void getSiteConfig(RoutingContext ctx) {
         configContext(ctx);
-        String path = config_dir + "/" + FolderConstants.SITES_AVAILABLE + "/" + ctx.request().getParam("file");
-        fs.readFile(path, v ->
+        fs.readFile(getFilePath(ctx.request().getParam("site")), v ->
                 ctx.response().end(v.result()));
+    }
+
+    private void putSiteConfig(RoutingContext ctx) {
+        configContext(ctx);
+
     }
 
     private void getNginxConfig(RoutingContext ctx) {
@@ -96,7 +100,7 @@ public class Crafter extends AbstractVerticle {
 
     private void getSiteEnabled(RoutingContext ctx) {
         configContext(ctx);
-        isSiteEnabled(ctx.request().getParam("file"))
+        isSiteEnabled(ctx.request().getParam("site"))
                 .subscribe(v -> {
                     ctx.response().end("true");
                 }, err -> {
@@ -107,9 +111,9 @@ public class Crafter extends AbstractVerticle {
 
     private void toggleSite(RoutingContext ctx) {
         configContext(ctx);
-        String file = ctx.request().getParam("file");
-        String path_link = config_dir + "/" + FolderConstants.SITES_ENABLED + "/" + file;
-        String path_exists = config_dir + "/" + FolderConstants.SITES_AVAILABLE + "/" + file;
+        String file = ctx.request().getParam("site");
+        String path_link = getLinkPath(file);
+        String path_exists = getFilePath(file);
         JsonObject o = new JsonObject().put("site", file);
         isSiteEnabled(file).subscribe(v ->
                         fs.unlink(path_link, res -> ctx.response().end(o.put("enabled", false).encodePrettily())),
@@ -124,8 +128,15 @@ public class Crafter extends AbstractVerticle {
         ctx.response().putHeader("Content-Type", "application/json");
     }
 
-    private Observable<String> isSiteEnabled(String file) {
-        String path = config_dir + "/" + FolderConstants.SITES_ENABLED + "/" + file;
-        return fs.readSymlinkObservable(path);
+    private Observable<String> isSiteEnabled(String site) {
+        return fs.readSymlinkObservable(getLinkPath(site));
+    }
+
+    private String getLinkPath(String site) {
+        return config_dir + "/" + FolderConstants.SITES_ENABLED + "/" + site;
+    }
+
+    private String getFilePath(String site) {
+        return config_dir + "/" + FolderConstants.SITES_AVAILABLE + "/" + site;
     }
 }
