@@ -18,7 +18,7 @@ export class Parser {
       if(f.locations.indexOf(l) == f.locations.length-1) {
         res = res.replace("%locations%", this.injectLoc(l, loc_template));
       } else {
-        res = res.replace("%locations%", this.injectLoc(l, loc_template) + "\n%locations%");
+        res = res.replace("%locations%", this.injectLoc(l, loc_template) + "\n        %locations%");
       }
     }
     return res;
