@@ -179,7 +179,7 @@ public class Crafter extends AbstractVerticle {
     private void getLocationTpl(RoutingContext ctx) {
         configContext(ctx);
         String tpl = ctx.request().getParam("tpl");
-        String path = "/Users/flo/git/nginx-crafter/location/sites/"+tpl+".crafter";
+        String path = "/Users/flo/git/nginx-crafter/templates/locations/"+tpl+".crafter";
         fs.readFile(path, v ->
                 ctx.response().end(v.result()));
     }

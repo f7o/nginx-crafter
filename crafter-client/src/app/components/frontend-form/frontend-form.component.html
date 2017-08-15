@@ -14,15 +14,20 @@
   <md-input-container>
     <input mdInput placeholder="https_port" [(ngModel)]="site.https_port">
   </md-input-container>
-  <md-input-container>
-    <input mdInput placeholder="proxy_pass_addr" [(ngModel)]="site.proxy_pass_addr">
-  </md-input-container>
-  <md-input-container>
-    <input mdInput placeholder="proxy_pass_port" [(ngModel)]="site.proxy_pass_port">
-  </md-input-container>
-  <md-input-container>
-    <input mdInput placeholder="location" [(ngModel)]="site.location">
-  </md-input-container>
+    <div *ngFor="let l of site.locations">
+      <md-input-container>
+        <input mdInput placeholder="proxy_pass_addr" [(ngModel)]="l.proxy_pass_addr">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="proxy_pass_port" [(ngModel)]="l.proxy_pass_port">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="location" [(ngModel)]="l.location">
+      </md-input-container>
+      <button md-icon-button (click)="addLoc()"><md-icon>add</md-icon></button>
+      <button *ngIf="site.locations.length > 1" md-icon-button (click)="removeLoc(site.locations.indexOf(l))"><md-icon>remove</md-icon></button>
+    </div>
+
   </md-card-content>
   <md-card-actions>
     <button md-icon-button (click)="save()"><md-icon>save</md-icon></button>

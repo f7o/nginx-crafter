@@ -32,6 +32,10 @@ export class RequestApi {
     return this.http.get(`/api/sites/template/nonssl-reverse`)
   }
 
+  public getNonSslLocTpl() {
+    return this.http.get(`/api/locations/template/nonssl-location`)
+  }
+
   public isActive(f: Frontend) {
     return this.http.get(`/api/sites/enabled/${f.id}`)
   }
