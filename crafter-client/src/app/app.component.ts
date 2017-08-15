@@ -11,7 +11,7 @@ export class AppComponent {
 
   public username: String = 'admin';
   public name: String = 'Florian Zouhar';
-  public email: String = 'florian.zouhar@igd.fraunhofer.de';
+  public email: String = 'mail@f7o.de';
 
   public routes: Object[] = [{
     icon: 'widgets',
