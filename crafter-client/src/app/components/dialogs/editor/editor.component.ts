@@ -19,4 +19,12 @@ export class EditorComponent {
 
   constructor(public dialogRef: MdDialogRef<EditorComponent>, @Inject(MD_DIALOG_DATA) public data: any) { }
 
+  save() {
+    this.dialogRef.close(this.data);
+  }
+
+  cancel() {
+    this.dialogRef.close();
+  }
+
 }

@@ -13,10 +13,5 @@ server {
     
         server_name %reverse_domain% %reverse_ip%;
 
-	    # Everything is a 404
-        location / {
-          return 404; #return the code 404
-        }
-
         %locations%
 }

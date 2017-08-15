@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {RequestApi} from "../../service/request-api";
 import {Parser} from "../../service/parser";
-import {MdDialog, MdDialogConfig, MdSnackBar} from "@angular/material";
+import {MdDialog, MdDialogConfig, MdDialogRef, MdSnackBar} from "@angular/material";
 import {EditorComponent} from "../dialogs/editor/editor.component";
 
 @Component({
@@ -13,6 +13,7 @@ export class FrontendComponent implements OnInit {
 
   public sites: Object[] = [];
   private diagConfig: MdDialogConfig = new MdDialogConfig;
+  private diag: MdDialogRef<EditorComponent>;
 
   constructor(
     private backend: RequestApi,
@@ -27,8 +28,18 @@ export class FrontendComponent implements OnInit {
   info(site: String) {
     this.backend.getSite(site).subscribe(res => {
       this.diagConfig.data = res.text();
-      this.mdDialog.open(EditorComponent, this.diagConfig);
-    })
+      this.diag = this.mdDialog.open(EditorComponent, this.diagConfig);
+      this.diag.afterClosed().subscribe(conf => {
+        if(conf) {
+          this.backend.putSite(site, conf).subscribe(res => {
+            console.log(res.json());
+            this.snackBar.open(`Site: "${site}" saved!`,'', {
+              duration: 2000
+            });
+          });
+        }
+      });
+    });
   }
 
   deleteSite(site: String) {
