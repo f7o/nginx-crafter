@@ -142,7 +142,6 @@ public class Manager {
 
                 }
                 if(c.getStatus() == Status.VALID) {
-                    future.complete("reg");
 
                     CSRBuilder csrb = new CSRBuilder();
                     csrb.addDomain(domain);
@@ -154,6 +153,9 @@ public class Manager {
                     X509Certificate certx = cert.download();
                     X509Certificate[] chain = cert.downloadChain();
                     writeCert(certx, chain, certFolder + "/" + domain + "/cert.pem");
+
+
+                    future.complete("reg");
 
 
                 }
