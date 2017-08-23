@@ -17,6 +17,8 @@ import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.exception.AcmeConflictException;
 import org.shredzone.acme4j.exception.AcmeException;
+import org.shredzone.acme4j.util.CSRBuilder;
+import org.shredzone.acme4j.util.CertificateUtils;
 import org.shredzone.acme4j.util.KeyPairUtils;
 
 import java.io.*;
@@ -25,6 +27,7 @@ import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 public class Manager {
@@ -125,7 +128,7 @@ public class Manager {
             int count = 0;
                 Buffer buf = Buffer.buffer();
                 buf.appendString(c.getAuthorization());
-                fs.writeFileBlocking(certFolder + "/" + domain + "/" + c.getToken(), buf);
+                fs.writeFileBlocking(certFolder + "/acme/acme-challenge/" + c.getToken(), buf);
             c.trigger();
 
             while (c.getStatus() != Status.VALID) {
@@ -140,12 +143,27 @@ public class Manager {
                 }
                 if(c.getStatus() == Status.VALID) {
                     future.complete("reg");
+
+                    CSRBuilder csrb = new CSRBuilder();
+                    csrb.addDomain(domain);
+                    csrb.setOrganization("The Example Organization");
+                    csrb.sign(keyPair);
+                    byte[] csr = csrb.getEncoded();
+
+                    Certificate cert = registration.requestCertificate(csr);
+                    X509Certificate certx = cert.download();
+                    X509Certificate[] chain = cert.downloadChain();
+                    writeCert(certx, chain, certFolder + "/" + domain + "/cert.pem");
+
+
                 }
 
 
         } catch (AcmeException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -158,5 +176,10 @@ public class Manager {
     private void writeKeyPair(KeyPair keypair, String file) throws IOException {
         FileWriter fw = new FileWriter(file);
         KeyPairUtils.writeKeyPair(keypair, fw);
+    }
+
+    private void writeCert(X509Certificate cert, X509Certificate[] chain, String file) throws IOException {
+        FileWriter fw = new FileWriter(file);
+        CertificateUtils.writeX509CertificateChain(fw, cert, chain);
     }
 }
