@@ -57,6 +57,7 @@ public class Manager {
         Router router = Router.router(vertx);
         router.get("/keys/create/:domain").handler(this::createKeypairRoute);
         router.get("/acme/:domain").handler(this::acmeRoute);
+        router.get("/csr/create/:domain/:org").handler(this::csrRoute);
         return router;
     }
 
@@ -75,6 +76,21 @@ public class Manager {
             acmeChallenge(domain, f);
         }, res -> {
             ctx.response().end("saved");
+        });
+    }
+
+    private void csrRoute(RoutingContext ctx) {
+        String domain = ctx.request().getParam("domain");
+        String org = ctx.request().getParam("org");
+        vertx.executeBlocking(f -> {
+            try {
+                generateCSR(domain, org, readKeyPair(certFolder + domain + "/keypair.pem"));
+            } catch (IOException e) {
+                f.fail(e.getMessage());
+            }
+            f.complete();
+        }, res -> {
+            ctx.response().end("generate");
         });
     }
 
@@ -159,12 +175,7 @@ public class Manager {
                 }
                 if(c.getStatus() == Status.VALID) {
 
-                    CSRBuilder csrb = new CSRBuilder();
-                    csrb.addDomain(domain);
-                    csrb.setOrganization("The Example Organization");
-                    csrb.sign(keys);
-                    byte[] csr = csrb.getEncoded();
-
+                    byte[] csr = generateCSR(domain, "example org", keys);
                     Certificate cert = registration.requestCertificate(csr);
                     X509Certificate certx = cert.download();
                     X509Certificate[] chain = cert.downloadChain();
@@ -192,5 +203,15 @@ public class Manager {
     private void writeCert(X509Certificate cert, X509Certificate[] chain, String file) throws IOException {
         FileWriter fw = new FileWriter(file);
         CertificateUtils.writeX509CertificateChain(fw, cert, chain);
+    }
+
+    private byte[] generateCSR(String domain, String org, KeyPair keypair) throws IOException {
+        CSRBuilder csrb = new CSRBuilder();
+        csrb.addDomain(domain);
+        csrb.setOrganization(org);
+        csrb.sign(keypair);
+        FileWriter fw = new FileWriter(certFolder + "/" + domain + "/cert.csr");
+        csrb.write(fw);
+        return csrb.getEncoded();
     }
 }
