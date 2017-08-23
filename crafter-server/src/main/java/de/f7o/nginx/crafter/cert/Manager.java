@@ -10,6 +10,8 @@ import io.vertx.rx.java.RxHelper;
 import io.vertx.rxjava.core.Future;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.core.file.FileSystem;
+import io.vertx.rxjava.ext.web.Router;
+import io.vertx.rxjava.ext.web.RoutingContext;
 import javafx.beans.binding.ObjectExpression;
 import org.shredzone.acme4j.*;
 import org.shredzone.acme4j.challenge.Challenge;
@@ -44,7 +46,10 @@ public class Manager {
 
     private JsonObject conf;
 
+    private Vertx vertx;
+
     public Manager(Vertx vertx) {
+        this.vertx = vertx;
         conf = vertx.getOrCreateContext().config();
 
         certFolder = conf.getJsonObject("nginx").getString("cert_dir");
@@ -52,16 +57,34 @@ public class Manager {
         if(conf.getJsonObject("acme").getBoolean("enabled", false)) {
             vertx.executeBlocking(this::startAcmeSession, res -> {
                 log.info(res.result());
-
-                vertx.executeBlocking(f -> {
-                    this.acmeChallenge("test.f7o.de", null, f);
-                }, res2 -> {
-                    log.warn(res2.result());
-                    log.warn(res2.cause());
-                });
             });
         }
 
+    }
+
+    public Router createRouter() {
+        Router router = Router.router(vertx);
+        router.get("/createKeys/:domain").handler(this::createKeypairRoute);
+        router.get("/acme/:domain").handler(this::acmeRoute);
+        return router;
+    }
+
+    private void createKeypairRoute(RoutingContext ctx) {
+        String domain = ctx.request().getParam("domain");
+        vertx.executeBlocking(f -> {
+            createKeyPair(domain, f);
+        }, res -> {
+            ctx.response().end(res.result().toString());
+        });
+    }
+
+    private void acmeRoute(RoutingContext ctx) {
+        String domain = ctx.request().getParam("domain");
+        vertx.executeBlocking(f -> {
+            acmeChallenge(domain, null, f);
+        }, res -> {
+            ctx.response().end(res.result().toString());
+        });
     }
 
     private void startAcmeSession(Future<Object> future) {
@@ -121,6 +144,8 @@ public class Manager {
 
     public void acmeChallenge(String domain, KeyPair keyPair, Future<Object> future) {
         try {
+            KeyPair keys = readKeyPair(certFolder + "/" + domain + "/keypair.pem");
+
             Authorization auth = registration.authorizeDomain(domain);
 
             Http01Challenge c = auth.findChallenge(Http01Challenge.TYPE);
@@ -146,7 +171,7 @@ public class Manager {
                     CSRBuilder csrb = new CSRBuilder();
                     csrb.addDomain(domain);
                     csrb.setOrganization("The Example Organization");
-                    csrb.sign(keyPair);
+                    csrb.sign(keys);
                     byte[] csr = csrb.getEncoded();
 
                     Certificate cert = registration.requestCertificate(csr);

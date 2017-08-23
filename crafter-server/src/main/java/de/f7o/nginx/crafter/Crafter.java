@@ -27,6 +27,8 @@ public class Crafter extends AbstractVerticle {
     private String cert_dir = "";
     private FileSystem fs;
 
+    Manager man;
+
     @Override
     public void start(Future startFuture) {
         HttpServer server = vertx.createHttpServer();
@@ -37,7 +39,7 @@ public class Crafter extends AbstractVerticle {
             log.info(config().encodePrettily());
         }
         fs = vertx.fileSystem();
-        Manager man = new Manager(vertx);
+
 
 
         startFuture.complete();
@@ -66,6 +68,9 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
 
         router.get(router_prefix + "/locations/template/:tpl").handler(this::getLocationTpl);
+
+        man = new Manager(vertx);
+        router.mountSubRouter("/cert", man.createRouter());
 
         createStaticRoutes(router);
         return router;
