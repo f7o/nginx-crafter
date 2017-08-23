@@ -16,7 +16,6 @@ import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import rx.Observable;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Crafter extends AbstractVerticle {
@@ -27,17 +26,21 @@ public class Crafter extends AbstractVerticle {
     private String cert_dir = "";
     private FileSystem fs;
 
+    Manager man;
+
     @Override
     public void start(Future startFuture) {
         HttpServer server = vertx.createHttpServer();
-        server.requestHandler(createRouter()::accept).listen(8080, "localhost");
+        int port = config().getInteger("http.port", 8080);
+        String host = config().getString("http.host", "localhost");
+        server.requestHandler(createRouter()::accept).listen(port, host);
         config_dir = config().getJsonObject("nginx").getString("config_dir", "/etc/nginx/");
         cert_dir = config().getJsonObject("nginx").getString("cert_dir", "/etc/nginx/ssl/");
         if (config().getJsonObject("crafter_server").getBoolean("print_config", false)) {
             log.info(config().encodePrettily());
         }
         fs = vertx.fileSystem();
-        Manager man = new Manager(vertx);
+
 
 
         startFuture.complete();
@@ -66,6 +69,9 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/sites/:site").handler(this::getSiteConfig);
 
         router.get(router_prefix + "/locations/template/:tpl").handler(this::getLocationTpl);
+
+        man = new Manager(vertx);
+        router.mountSubRouter(router_prefix + "/cert", man.createRouter());
 
         createStaticRoutes(router);
         return router;

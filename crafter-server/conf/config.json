@@ -2,8 +2,8 @@
   "http.host": "localhost",
   "http.port": 8080,
   "nginx" : {
-    "config_dir": "/Users/flo/dev/nginx_conf/",
-    "cert_dir": "/Users/flo/dev/nginx_conf/ssl/"
+    "config_dir": "/etc/nginx/",
+    "cert_dir": "/etc/nginx/ssl/"
   },
   "crafter_server": {
     "print_config": false,
@@ -12,6 +12,8 @@
   "acme": {
     "enabled": true,
     "email": "mail@example.com",
-    "agreement_url": "https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf"
+    "server_uri": "acme://letsencrypt.org/staging",
+    "agreement_url": "https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf",
+    "acme_token_folder": "/etc/nginx/ssl/acme/acme-challenge"
   }
 }
