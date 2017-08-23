@@ -16,7 +16,6 @@ import io.vertx.rxjava.ext.web.handler.StaticHandler;
 import rx.Observable;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Crafter extends AbstractVerticle {
@@ -32,7 +31,9 @@ public class Crafter extends AbstractVerticle {
     @Override
     public void start(Future startFuture) {
         HttpServer server = vertx.createHttpServer();
-        server.requestHandler(createRouter()::accept).listen(8080, "localhost");
+        int port = config().getInteger("http.port", 8080);
+        String host = config().getString("http.host", "localhost");
+        server.requestHandler(createRouter()::accept).listen(port, host);
         config_dir = config().getJsonObject("nginx").getString("config_dir", "/etc/nginx/");
         cert_dir = config().getJsonObject("nginx").getString("cert_dir", "/etc/nginx/ssl/");
         if (config().getJsonObject("crafter_server").getBoolean("print_config", false)) {

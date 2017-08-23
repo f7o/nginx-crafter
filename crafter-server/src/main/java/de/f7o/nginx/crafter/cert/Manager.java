@@ -1,21 +1,15 @@
 package de.f7o.nginx.crafter.cert;
 
-import de.f7o.nginx.crafter.Crafter;
 import io.vertx.rxjava.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.rx.java.ObservableFuture;
-import io.vertx.rx.java.RxHelper;
 import io.vertx.rxjava.core.Future;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.core.file.FileSystem;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import javafx.beans.binding.ObjectExpression;
 import org.shredzone.acme4j.*;
-import org.shredzone.acme4j.challenge.Challenge;
-import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.exception.AcmeConflictException;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -27,10 +21,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 
 public class Manager {
     private Logger log = LoggerFactory.getLogger(Manager.class);
@@ -81,7 +72,7 @@ public class Manager {
     private void acmeRoute(RoutingContext ctx) {
         String domain = ctx.request().getParam("domain");
         vertx.executeBlocking(f -> {
-            acmeChallenge(domain, null, f);
+            acmeChallenge(domain, f);
         }, res -> {
             ctx.response().end("saved");
         });
@@ -99,7 +90,7 @@ public class Manager {
         try {
             builder = new RegistrationBuilder();
             builder.addContact("mailto:" + conf.getJsonObject("acme").getString("email"));
-            session = new Session("acme://letsencrypt.org/staging", keyPair);
+            session = new Session(conf.getJsonObject("acme").getString("server_uri"), keyPair);
             registration = builder.create(session);
             registration.modify().setAgreement(new URI(conf.getJsonObject("acme").getString("agreement_url"))).commit();
             URI accountLocationUri = registration.getLocation();
@@ -116,7 +107,7 @@ public class Manager {
         }
     }
 
-    public void createKeyPair(String domain, Future<Object> future) {
+    private void createKeyPair(String domain, Future<Object> future) {
         try {
 
             String domainCertFolder = certFolder;
@@ -142,7 +133,7 @@ public class Manager {
         }
     }
 
-    public void acmeChallenge(String domain, KeyPair keyPair, Future<Object> future) {
+    private void acmeChallenge(String domain, Future<Object> future) {
         try {
             KeyPair keys = readKeyPair(certFolder + "/" + domain + "/keypair.pem");
 
@@ -153,7 +144,7 @@ public class Manager {
             int count = 0;
                 Buffer buf = Buffer.buffer();
                 buf.appendString(c.getAuthorization());
-                fs.writeFileBlocking(certFolder + "/acme/acme-challenge/" + c.getToken(), buf);
+                fs.writeFileBlocking(conf.getJsonObject("acme").getString("acme_token_folder") + "/" + c.getToken(), buf);
             c.trigger();
 
             while (c.getStatus() != Status.VALID) {
@@ -181,17 +172,10 @@ public class Manager {
 
 
                     future.complete("reg");
-
-
                 }
 
-
-        } catch (AcmeException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (AcmeException | InterruptedException | IOException e) {
+            future.fail(e.getMessage());
         }
     }
 
