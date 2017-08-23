@@ -1,5 +1,6 @@
 package de.f7o.nginx.crafter;
 
+import de.f7o.nginx.crafter.cert.Manager;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -36,6 +37,9 @@ public class Crafter extends AbstractVerticle {
             log.info(config().encodePrettily());
         }
         fs = vertx.fileSystem();
+        Manager man = new Manager(vertx);
+
+
         startFuture.complete();
     }
 

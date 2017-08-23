@@ -8,7 +8,10 @@ dependencies {
 
     compile "io.vertx:vertx-rx-java:$vertxVersion"
     compile "io.vertx:vertx-web:$vertxVersion"
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.57'
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.57'
+    compile "org.shredzone.acme4j:acme4j-client:0.11"
+    compile "org.shredzone.acme4j:acme4j-utils:0.11"
 
 }
 
