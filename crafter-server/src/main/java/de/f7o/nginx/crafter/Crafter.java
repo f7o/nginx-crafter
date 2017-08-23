@@ -70,7 +70,7 @@ public class Crafter extends AbstractVerticle {
         router.get(router_prefix + "/locations/template/:tpl").handler(this::getLocationTpl);
 
         man = new Manager(vertx);
-        router.mountSubRouter("/cert", man.createRouter());
+        router.mountSubRouter(router_prefix + "/cert", man.createRouter());
 
         createStaticRoutes(router);
         return router;

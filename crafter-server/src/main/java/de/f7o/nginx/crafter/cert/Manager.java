@@ -64,7 +64,7 @@ public class Manager {
 
     public Router createRouter() {
         Router router = Router.router(vertx);
-        router.get("/createKeys/:domain").handler(this::createKeypairRoute);
+        router.get("/keys/create/:domain").handler(this::createKeypairRoute);
         router.get("/acme/:domain").handler(this::acmeRoute);
         return router;
     }
@@ -74,7 +74,7 @@ public class Manager {
         vertx.executeBlocking(f -> {
             createKeyPair(domain, f);
         }, res -> {
-            ctx.response().end(res.result().toString());
+            ctx.response().end("created");
         });
     }
 
@@ -83,7 +83,7 @@ public class Manager {
         vertx.executeBlocking(f -> {
             acmeChallenge(domain, null, f);
         }, res -> {
-            ctx.response().end(res.result().toString());
+            ctx.response().end("saved");
         });
     }
 
