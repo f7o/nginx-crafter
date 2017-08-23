@@ -85,10 +85,10 @@ public class Manager {
         vertx.executeBlocking(f -> {
             try {
                 generateCSR(domain, org, readKeyPair(certFolder + domain + "/keypair.pem"));
+                f.complete();
             } catch (IOException e) {
                 f.fail(e.getMessage());
             }
-            f.complete();
         }, res -> {
             ctx.response().end("generate");
         });
