@@ -8,6 +8,7 @@ dependencies {
 
     compile "io.vertx:vertx-rx-java:$vertxVersion"
     compile "io.vertx:vertx-web:$vertxVersion"
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
 
 }
 
