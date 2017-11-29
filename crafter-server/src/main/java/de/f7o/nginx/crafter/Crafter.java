@@ -1,6 +1,6 @@
 package de.f7o.nginx.crafter;
 
-import de.f7o.nginx.crafter.cert.Manager;
+import de.f7o.nginx.crafter.cert.CertManager;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -26,7 +26,7 @@ public class Crafter extends AbstractVerticle {
     private String cert_dir = "";
     private FileSystem fs;
 
-    Manager man;
+    CertManager man;
 
     @Override
     public void start(Future startFuture) {
@@ -70,7 +70,7 @@ public class Crafter extends AbstractVerticle {
 
         router.get(router_prefix + "/locations/template/:tpl").handler(this::getLocationTpl);
 
-        man = new Manager(vertx);
+        man = new CertManager(vertx);
         router.mountSubRouter(router_prefix + "/cert", man.createRouter());
 
         createStaticRoutes(router);

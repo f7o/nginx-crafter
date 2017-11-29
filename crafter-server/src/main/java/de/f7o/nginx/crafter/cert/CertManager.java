@@ -23,8 +23,8 @@ import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class Manager {
-    private Logger log = LoggerFactory.getLogger(Manager.class);
+public class CertManager {
+    private Logger log = LoggerFactory.getLogger(CertManager.class);
 
 
     private String certFolder;
@@ -39,7 +39,7 @@ public class Manager {
 
     private Vertx vertx;
 
-    public Manager(Vertx vertx) {
+    public CertManager(Vertx vertx) {
         this.vertx = vertx;
         conf = vertx.getOrCreateContext().config();
 
